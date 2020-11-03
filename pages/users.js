@@ -14,7 +14,7 @@ import React from 'react'
 
 const Users = props => {
   const test = (event, user) => {
-    
+
   }
 
   return (
@@ -24,8 +24,8 @@ const Users = props => {
         </Typography>
         <div>
             <List>
-              {props.users.map(user => (
-                <ListItem button onClick={(event) => test(event, user)}>
+              {props.users.map((user, index) => (
+                <ListItem button onClick={(event) => test(event, user)} key={index}>
                 <ListItemAvatar>
                   <Avatar>
                     <PersonIcon />
