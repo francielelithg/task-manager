@@ -7,7 +7,7 @@ export default function Home() {
     <MainLayout>
       <div className={styles.container}>
         <Typography variant="h6" gutterBottom>
-          Please, choose if you want to manage tasks or users.
+          Tasks
         </Typography>
       </div>
     </MainLayout>
