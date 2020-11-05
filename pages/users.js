@@ -11,21 +11,19 @@ import PersonIcon from '@material-ui/icons/Person'
 import UserService from '../services/user'
 import FormUser from '../components/FormUser'
 import React from 'react'
+import { useRouter } from 'next/router'
 
 const Users = props => {
-  const [dialogDelete, setDialogDelete] = React.useState(false)
+  const router = useRouter()
+
   const [formUser, setFormUser] = React.useState(false)
   const [usersList, setUsersList] = React.useState(props.users)
 
   const test = (event, user) => {
-  }
-
-  const handleClick = (event) => {
-    setDialogDelete(true)
-  }
-
-  const handleClose = () => {
-    setDialogDelete(false)
+    router.push({
+      pathname: '/user/[id]',
+      query: { id: user.id }
+    })
   }
 
   const handleFormUser = () => {

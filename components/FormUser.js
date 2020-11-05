@@ -9,7 +9,8 @@ import React from 'react'
 
 const FormUser = props => {
   const [dialogAdd, setDialogAdd] = React.useState(true)
-  const [name, setName] = React.useState('')
+  const [name, setName] = React.useState(props.user.name || '')
+  const [user, setUser] = React.useState(props.user || null)
 
   const handleChange = event  => {
     event.persist()
@@ -24,11 +25,21 @@ const FormUser = props => {
       name: name
     }
 
-    UserService.createUser(user)
+    UserService.updateUser(user)
       .then(() => {
         props.update()
       })
 
+    props.passFormUser(false)
+  }
+
+  const handleUpdate = (event) => {
+    event.preventDefault()
+    setDialogAdd(false)
+
+    user.name = name
+
+    UserService.updateUser(user)
     props.passFormUser(false)
   }
 
@@ -54,7 +65,8 @@ const FormUser = props => {
       </DialogContent>
       <DialogActions>
         <Button onClick={(event) => setDialogAdd(false)} color="primary">Cancel</Button>
-        <Button onClick={handleSave} color="secondary" autoFocus>Save</Button>
+        {!props.user && <Button onClick={handleSave} color="secondary" autoFocus>Save</Button>}
+        {props.user && <Button onClick={handleUpdate} color="secondary" autoFocus>Update</Button>}
       </DialogActions>
     </Dialog>
   )
