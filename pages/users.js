@@ -1,3 +1,6 @@
+import React from 'react'
+import UserService from '../services/user'
+import { useRouter } from 'next/router'
 import MainLayout from '../layouts/MainLayout'
 import Avatar from '@material-ui/core/Avatar'
 import IconButton from '@material-ui/core/IconButton'
@@ -8,10 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import PersonIcon from '@material-ui/icons/Person'
-import UserService from '../services/user'
 import FormUser from '../components/FormUser'
-import React from 'react'
-import { useRouter } from 'next/router'
 
 const Users = props => {
   const router = useRouter()
@@ -44,7 +44,6 @@ const Users = props => {
         <IconButton edge="end" aria-label="more" aria-controls="fade-menu" aria-haspopup="true" onClick={handleFormUser}>
           <AddCircleIcon />
         </IconButton>
-
         {formUser && <FormUser passFormUser={setFormUser} update={updateData} />}
       </Typography>
       <List>

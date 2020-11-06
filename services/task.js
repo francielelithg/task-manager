@@ -1,33 +1,10 @@
 import axios from 'axios'
 
-const url = 'http://localhost:8080/user'
+const url = 'http://localhost:8080/task'
 
 export default {
-  getAllUsers() {
-    return new Promise((resolve, reject) => {
-      axios.get(url)
-        .then(result => {
-          resolve(result.data)
-        })
-        .catch(error => {
-          reject(error)
-        })
-    })
-  },
 
-  getUserById(id) {
-    return new Promise((resolve, reject) => {
-      axios.get(`${url}/${id}`)
-        .then(result => {
-          resolve(result.data)
-        })
-        .catch(error => {
-          reject(error)
-        })
-    })
-  },
-
-  createUser(data) {
+  createTask(data) {
     return new Promise((resolve, reject) => {
       axios.post(url, data)
         .then(result => {
@@ -39,29 +16,28 @@ export default {
     })
   },
 
-  updateUser(data) {
+  updateTask(data) {
     return new Promise((resolve, reject) => {
       axios.put(`${url}/${data.id}`, data)
         .then(result => {
           resolve()
         })
         .catch(error => {
-          console.log(error)
           reject(error)
         })
     })
   },
 
-  deleteUser(id) {
+  deleteTask(id) {
     return new Promise((resolve, reject) => {
       axios.delete(`${url}/${id}`)
         .then(result => {
           resolve()
         })
         .catch(error => {
-          console.log(error)
           reject(error)
         })
     })
   }
+
 }
