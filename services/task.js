@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = 'http://localhost:8080/task'
+const url = `${process.env.URL_API}/task`
 
 export default {
 
