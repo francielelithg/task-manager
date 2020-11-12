@@ -19,18 +19,18 @@ const FormUser = props => {
 
   const handleSave = (event) => {
     event.preventDefault()
-    setDialogAdd(false)
 
     const user = {
       name: name
     }
 
-    UserService.updateUser(user)
-      .then(() => {
-        props.update()
-      })
-
     props.passFormUser(false)
+
+    UserService.createUser(user)
+      .then(() => {
+        props.update(true)
+        setDialogAdd(false)
+      })
   }
 
   const handleUpdate = (event) => {
@@ -68,8 +68,20 @@ const FormUser = props => {
           setDialogAdd(false)
           props.passFormUser(false)
         }} color="primary">Cancel</Button>
-        {!props.user && <Button onClick={handleSave} color="secondary" autoFocus>Save</Button>}
-        {props.user && <Button onClick={handleUpdate} color="secondary" autoFocus>Update</Button>}
+        {!props.user && 
+        <Button 
+          onClick={handleSave} 
+          color="secondary" 
+          autoFocus
+          disabled={name == ''}>Save</Button>}
+        {props.user && 
+        <Button 
+          onClick={handleUpdate}
+          color="secondary"
+          autoFocus
+          disabled={name == ''}>
+            Update
+          </Button>}
       </DialogActions>
     </Dialog>
   )

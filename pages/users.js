@@ -8,6 +8,7 @@ import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import IconButton from '@material-ui/core/IconButton'
 import InputBase from '@material-ui/core/InputBase'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
@@ -28,6 +29,25 @@ const Users = props => {
 
   const [formUser, setFormUser] = React.useState(false)
   const [usersList, setUsersList] = React.useState(users)
+  const [forceUpdate, setForceUpdate] = React.useState(false)
+  const [linearProgress, setLinearProgress] = React.useState(false)
+
+  React.useEffect(() => {
+    if (forceUpdate) {
+      setLinearProgress(true)
+      UserService.getAllUsers()
+      .then(result => {
+        if (result.length > 0) {
+          setUsersList(result.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)))
+          setLinearProgress(false)
+          setForceUpdate(false)
+        }
+      })
+      .catch(() => {
+        setLinearProgress(false)
+      })
+    }
+  })
 
   const test = (event, user) => {
     router.push({
@@ -48,13 +68,6 @@ const Users = props => {
     } else {
       setUsersList(users)
     }
-  }
-
-  const updateData = (data) => {
-    UserService.getAllUsers()
-      .then(result => {
-        setUsersList(result.sort((a, b) => b.updatedAt - a.updatedAt))
-      })
   }
 
   return (
@@ -93,9 +106,10 @@ const Users = props => {
             </Toolbar>
           </Container>
         </AppBar>
+        {linearProgress ? <LinearProgress color="secondary" /> : <Box mt={2} />}
       </div>
 
-      {formUser && <FormUser passFormUser={setFormUser} update={updateData} />}
+      {formUser && <FormUser passFormUser={setFormUser} update={setForceUpdate} />}
 
       <Container maxWidth='sm'>
         <Box my={4}>
@@ -117,16 +131,11 @@ const Users = props => {
   )
 }
 
-export async function loadData() {
-  const users = await UserService.getAllUsers()
-  return users
-}
-
 export async function getServerSideProps(context) {
   const users = await UserService.getAllUsers()
   return {
     props: {
-      users: users.sort((a, b) => b.updatedAt - a.updatedAt)
+      users: users.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
     }
   }
 }
@@ -173,7 +182,6 @@ const useStyles = makeStyles((theme) => ({
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create('width'),
     width: '100%',

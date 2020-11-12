@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = `${process.env.URL_API}/task`
+const url = `${process.env.NEXT_PUBLIC_URL_API}/task`
 
 export default {
 

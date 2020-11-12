@@ -1,8 +1,6 @@
 import React from 'react'
 import TaskService from '../services/task'
 import Box from '@material-ui/core/Box'
-import Backdrop from '@material-ui/core/Backdrop'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import Button from '@material-ui/core/Button'
 import Checkbox from '@material-ui/core/Checkbox'
 import Dialog from '@material-ui/core/Dialog'
@@ -17,12 +15,10 @@ const FormTask = (props) => {
   const [user] = React.useState(props.user)
   const [description, setDescription] = React.useState(props.task ? props.task.description : '')
   const [state, setState] = React.useState(props.task ? props.task.state : false)
-  const [reaload, setReload] = React.useState(false)
 
   const handleSave = (event) => {
     event.preventDefault()
     setDialog(false)
-    setReload(true)
 
     const task = {
       user: user,
@@ -32,11 +28,10 @@ const FormTask = (props) => {
 
     TaskService.createTask(task)
       .then(() => {
-        props.reload()
-        setReload(false)
+        props.update(true)
       })
       .catch(() => {
-        setReload(false)
+
       })
     props.passFormUser(false)
   }
@@ -44,17 +39,15 @@ const FormTask = (props) => {
   const handleUpdate = (event) => {
     event.preventDefault()
     setDialog(false)
-    setReload(true)
 
     props.task.description = description
     props.task.state = state
 
     TaskService.updateTask(props.task)
       .then(() => {
-        setReload(false)
+        props.update(true)
       })
       .catch(() => {
-        setReload(false)
       })
 
     props.passFormUser(false)
@@ -108,14 +101,20 @@ const FormTask = (props) => {
             props.passFormUser(false)
             props.updateSelected(null)
           }} color="primary">Cancel</Button>
-          {!props.task && <Button onClick={handleSave} color="secondary" autoFocus>Save</Button>}
-          {props.task && <Button onClick={handleUpdate} color="secondary" autoFocus>Update</Button>}
+          {!props.task &&
+          <Button 
+            onClick={handleSave}
+            color="secondary" 
+            autoFocus
+            disabled={description == ''}>Save</Button>}
+          {props.task && 
+          <Button 
+            onClick={handleUpdate}
+            color="secondary"
+            autoFocus
+            disabled={description == ''}>Update</Button>}
         </DialogActions>
       </Dialog>
-
-      <Backdrop open={reaload}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
     </>
   )
 }

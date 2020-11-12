@@ -13,13 +13,12 @@ import Checkbox from '@material-ui/core/Checkbox'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogActions from '@material-ui/core/DialogActions'
-import Grid from '@material-ui/core/Grid'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import AddCircleIcon from '@material-ui/icons/AddCircle'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -32,15 +31,34 @@ const User = (props) => {
   const classes = useStyles()
   const router = useRouter()
 
-  const [user] = React.useState(props.user)
+  const [user, setUser] = React.useState(props.user)
   const [allowEdit, setAllowEdit] = React.useState(false)
   const [deleteUserDialog, setDeleteUserDialog] = React.useState(false)
   const [deleteTaskDialog, setDeleteTaskDialog] = React.useState(false)
   const [task, setTask] = React.useState(null)
   const [formTask, setFormTask] = React.useState(false)
-  const [reaload, setReload] = React.useState(false)
+  const [forceUpdate, setForceUpdate] = React.useState(false)
+  const [linearProgress, setLinearProgress] = React.useState(false)
+
+  React.useEffect(() => {
+    if (forceUpdate) {
+      setLinearProgress(true)
+      UserService.getUserById(user.id)
+      .then(result => {
+        if (result) {
+          setUser(result)
+          setLinearProgress(false)
+          setForceUpdate(false)
+        }
+      })
+      .catch(() => {
+        setLinearProgress(false)
+      })
+    }
+  })
 
   const handleBack = () => {
+    setLinearProgress(true)
     router.back()
   }
 
@@ -51,36 +69,30 @@ const User = (props) => {
 
   const handleDelete = (event, user) => {
     setDeleteUserDialog(false)
-    setReload(true)
+    setLinearProgress(true)
 
     UserService.deleteUser(user.id)
       .then(() => {
         router.back()
-        setReload(false)
       })
       .catch(() => {
-        setReload(false)
+        setLinearProgress(false)
       })
   }
 
   const handleDeleteTask = (event) => {
     setDeleteTaskDialog(false)
-    setReload(true)
+    setLinearProgress(true)
 
     TaskService.deleteTask(task.id)
       .then(() => {
-        router.reload()
-        setReload(false)
+        setForceUpdate(true)
       })
       .catch(() => {
-        setReload(false)
+        setLinearProgress(false)
       })
 
     setTask(null)
-  }
-
-  const reload = () => {
-    router.reload()
   }
 
   return (
@@ -122,6 +134,7 @@ const User = (props) => {
             </Toolbar>
           </Container>
         </AppBar>
+        {linearProgress ? <LinearProgress color="secondary" /> : <Box mt={2} />}
       </div>
 
       <Container maxWidth='sm'>
@@ -166,7 +179,7 @@ const User = (props) => {
 
       {allowEdit && <FormUser user={user} passFormUser={setAllowEdit} />}
 
-      {formTask && <FormTask user={user} task={task} passFormUser={setFormTask} updateSelected={setTask} reload={reload} />}
+      {formTask && <FormTask user={user} task={task} passFormUser={setFormTask} updateSelected={setTask} update={setForceUpdate} />}
 
       <Dialog
         open={deleteUserDialog}
@@ -194,10 +207,6 @@ const User = (props) => {
           <Button onClick={(event) => handleDeleteTask(event, user)} color="secondary" autoFocus>Delete</Button>
         </DialogActions>
       </Dialog>
-
-      <Backdrop open={reaload}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
     </MainLayout>
   )
 }
