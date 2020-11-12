@@ -1,5 +1,6 @@
 import React from 'react'
 import TaskService from '../services/task'
+import Box from '@material-ui/core/Box'
 import Backdrop from '@material-ui/core/Backdrop'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Button from '@material-ui/core/Button'
@@ -67,7 +68,7 @@ const FormTask = (props) => {
         onClose={(event) => setDialog(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{`Add new task`}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{props.task ? `Edit task` : `Add new task`}</DialogTitle>
         <DialogContent>
           <TextField
             disabled
@@ -77,15 +78,19 @@ const FormTask = (props) => {
             type="text"
             fullWidth
           />
-          <TextField
-            required
-            id="description"
-            label="Description"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            type="text"
-            fullWidth
-          />
+          <Box my={3}>
+            <TextField
+              required
+              multiline
+              rowsMax={5}
+              id="description"
+              label="Description"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              type="text"
+              fullWidth
+            />
+          </Box>
           <FormControlLabel
             control={
               <Checkbox

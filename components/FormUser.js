@@ -9,8 +9,8 @@ import React from 'react'
 
 const FormUser = props => {
   const [dialogAdd, setDialogAdd] = React.useState(true)
-  const [name, setName] = React.useState(props.user.name || '')
-  const [user, setUser] = React.useState(props.user || null)
+  const [name, setName] = React.useState(props.user ? props.user.name : '')
+  const [user] = React.useState(props.user || null)
 
   const handleChange = event  => {
     event.persist()
@@ -49,7 +49,7 @@ const FormUser = props => {
       onClose={(event) => setDialogAdd(false)}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">{`Add new user`}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{props.user ? `Edit user` : `Add new user`}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -64,7 +64,10 @@ const FormUser = props => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={(event) => setDialogAdd(false)} color="primary">Cancel</Button>
+        <Button onClick={(event) => {
+          setDialogAdd(false)
+          props.passFormUser(false)
+        }} color="primary">Cancel</Button>
         {!props.user && <Button onClick={handleSave} color="secondary" autoFocus>Save</Button>}
         {props.user && <Button onClick={handleUpdate} color="secondary" autoFocus>Update</Button>}
       </DialogActions>
