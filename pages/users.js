@@ -36,20 +36,21 @@ const Users = props => {
     if (forceUpdate) {
       setLinearProgress(true)
       UserService.getAllUsers()
-      .then(result => {
-        if (result.length > 0) {
-          setUsersList(result.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)))
+        .then(result => {
+          if (result.length > 0) {
+            setUsersList(result.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)))
+            setLinearProgress(false)
+            setForceUpdate(false)
+          }
+        })
+        .catch(() => {
           setLinearProgress(false)
-          setForceUpdate(false)
-        }
-      })
-      .catch(() => {
-        setLinearProgress(false)
-      })
+        })
     }
   })
 
   const test = (event, user) => {
+    setLinearProgress(true)
     router.push({
       pathname: '/user/[id]',
       query: { id: user.id }
@@ -133,6 +134,7 @@ const Users = props => {
 
 export async function getServerSideProps(context) {
   const users = await UserService.getAllUsers()
+  
   return {
     props: {
       users: users.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
